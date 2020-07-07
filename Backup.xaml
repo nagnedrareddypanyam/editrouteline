@@ -1,0 +1,64 @@
+﻿<Window x:Class="EWLDitital.PresentationLayer.Views.Backup"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+         xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EWLDitital.PresentationLayer.Views"
+         xmlns:local1="clr-namespace:EWLDitital"
+        mc:Ignorable="d" Height="450" Width="800" WindowStartupLocation="CenterScreen" >
+    <ac:AdornedControl Name="LoadingAdorner">
+        <ac:AdornedControl.AdornerContent>
+            <local1:LoadingWait></local1:LoadingWait>
+        </ac:AdornedControl.AdornerContent>
+
+        <Grid Background="#263238">
+
+            <TextBlock Text="Plase select backup file path"  FontSize="14" FontWeight="Bold" HorizontalAlignment="Left" 
+                                   Foreground="White" VerticalAlignment="Center" Margin="350,-90,0,0" FontFamily="Calibri">
+            </TextBlock>
+            <Button x:Name="update"  HorizontalAlignment="Left" Width="100" Height="29" Margin="245,150,0,193"  Background="#FF309C33" ToolTip="Home" BorderBrush="White"  Style="{StaticResource MyButton1}" Click="update_Click"  >
+                <Grid>
+                    <TextBlock Text="Browse" FontFamily="Calibri" FontSize="14" HorizontalAlignment="Right" Foreground="White" VerticalAlignment="Center" Margin="40,0,0,0">
+                    </TextBlock>
+                    <Image Source="/Icons/unnamed.png" HorizontalAlignment="Right" Margin="0,0,55,0" VerticalAlignment="Center" />
+                </Grid>
+
+            </Button>
+            <TextBox HorizontalAlignment="Left" Name="textbox" Height="29" Margin="345,150,0,195" IsEnabled="False" TextWrapping="Wrap" VerticalAlignment="Center" Width="270" />
+
+
+            <Button x:Name="finish"  HorizontalAlignment="Right" IsEnabled="False" VerticalAlignment="Bottom" Width="100" Height="29" Margin="0,0,135,25"  Background="#FF309C33" ToolTip="Home" BorderBrush="White"  Style="{StaticResource MyButton1}" Click="finish_Click"  >
+                <Grid>
+                    <TextBlock Text="Finish" FontFamily="Calibri" FontSize="14" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center" >
+                    </TextBlock>
+                </Grid>
+
+            </Button>
+            <Button x:Name="close"  HorizontalAlignment="Right"  VerticalAlignment="Bottom" Width="100" Height="29" Margin="0,0,25,25"  Background="#FF309C33"  BorderBrush="White"  Style="{StaticResource MyButton1}"  Click="close_Click"  >
+                <Grid>
+                    <TextBlock Text="Close" FontFamily="Calibri" FontSize="14" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center" >
+                    </TextBlock>
+                </Grid>
+            </Button>
+
+            <TextBox HorizontalAlignment="Left" Name="textbox2" Height="29" Margin="345,10,0,195" IsEnabled="False"  Width="270" />
+            <Button x:Name="update2"  HorizontalAlignment="Left" Width="100" Height="29" Margin="245,10,0,193"  Background="#FF309C33" ToolTip="Home" BorderBrush="White"  Style="{StaticResource MyButton1}" Click="update2_Click"  >
+                <Grid>
+                    <TextBlock Text="Browse" FontFamily="Calibri" FontSize="14" HorizontalAlignment="Right" Foreground="White" VerticalAlignment="Center" Margin="40,0,0,0">
+                    </TextBlock>
+                    <Image Source="/Icons/unnamed.png" HorizontalAlignment="Right" Margin="0,0,55,0" VerticalAlignment="Center" />
+                </Grid>
+
+            </Button>
+
+            <Button x:Name="finish2"  HorizontalAlignment="Right" IsEnabled="False" VerticalAlignment="Bottom" Width="100" Height="29" Margin="0,0,245,25"  Background="#FF309C33" ToolTip="Home" BorderBrush="White"  Style="{StaticResource MyButton1}" Click="finish2_Click"  >
+                <Grid>
+                    <TextBlock Text="Restore" FontFamily="Calibri" FontSize="14" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center" >
+                    </TextBlock>
+                </Grid>
+
+            </Button>
+        </Grid>
+    </ac:AdornedControl>
+</Window>

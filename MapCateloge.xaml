@@ -1,0 +1,1476 @@
+﻿<UserControl x:Class="EWLDitital.PresentationLayer.Views.MapCateloge"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013"
+             xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              xmlns:esriUI="clr-namespace:Esri.ArcGISRuntime.UI;assembly=Esri.ArcGISRuntime"
+             xmlns:local="clr-namespace:EWLDitital.PresentationLayer.ViewModels"
+             xmlns:local1="clr-namespace:EWLDitital"
+             xmlns:osc="clr-namespace:OpenSourceControls;assembly=DockPanelSplitter"
+             
+             mc:Ignorable="d" Loaded="UserControl_Loaded" >
+    <UserControl.Resources>
+        <local:MapViewModel x:Key="MapViewModel" />
+        <Storyboard x:Key="sbShowLeftMenu" >
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="-230,0,0,0" To="0,0,0,0" DecelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+        <Storyboard x:Key="sbHideLeftMenu">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="-230,0,0,0" AccelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+
+        <Storyboard x:Key="sbShowRightMenu" >
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,40,-150,0" To="0,40,0,0" DecelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+        <Storyboard x:Key="sbHideRightMenu">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,40,0,0" To="0,40,-150,0" AccelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+        <Storyboard x:Key="sbShowRightCheckout" >
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,-450,0" To="0,0,0,0" DecelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+        <Storyboard x:Key="sbHideRightCheckout">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="0,0,-450,0" AccelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+
+        <Storyboard x:Key="sbShowRightRoute" >
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,-450,0" To="0,0,0,0" DecelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+        <Storyboard x:Key="sbHideRightRoute">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="0,0,-450,0" AccelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+    </UserControl.Resources>
+    <DockPanel Background="#263238" Grid.Row="0">
+        <Border 
+                BorderBrush="#263238"
+                Background="#263238"
+                BorderThickness="2"
+                >
+            <StackPanel Panel.ZIndex="2" Name="pnlLeftMenu" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,0" Background="#000000" >
+                <Grid DockPanel.Dock="Left" Name="leftpanel" Width="280" MinWidth="40">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top"  HorizontalAlignment="Center" Background="#263238">
+                        <TextBlock Text="Product Filter" Foreground="White" Height="30" Width="202" Margin="80,5,0,0"  FontFamily="Calibri" FontSize="16"  >
+                        </TextBlock>
+                    </StackPanel>
+                    <Button Panel.ZIndex="2" Name="btnLeftMenuShow" Background="#000000"  HorizontalAlignment="Left" Margin="0,40,0,0" VerticalAlignment="Top" Width="48" Height="150" Click="btnLeftMenuShow_Click" BorderBrush="Transparent" Style="{StaticResource MyButton}" >
+                        <Grid>
+                            <TextBlock Text="Product Filter" Foreground="White"  FontFamily="Calibri" FontSize="16" RenderTransformOrigin="0.5,0.5"  HorizontalAlignment="Center" Margin="-27,5,-19,-5" >
+                                <TextBlock.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform CenterX="100"/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="90"/>
+                                        <TranslateTransform Y="0" />
+                                    </TransformGroup>
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                            <Image x:Name="fltimg" Source="/Icons/left.png" Width="16" HorizontalAlignment="Center" Margin="08,-58,14,0" VerticalAlignment="Top" >
+                            </Image>
+                        </Grid>
+                    </Button>
+
+                    <TreeView x:Name="treeView" Margin="44,40,0,0"  BorderBrush="Transparent"  ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=Families}"  Background="Transparent" Foreground="White" >
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate  DataType="{x:Type local:Family}" ItemsSource="{Binding Members}" >
+                                <CheckBox Content="{Binding Name}" FontFamily="Calibri" FontSize="16" IsChecked="{Binding Path=(local:ItemHelper.IsChecked), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" >
+                                    <CheckBox.Style>
+                                        <Style TargetType="{x:Type CheckBox}">
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Setter Property="Margin" Value="0,6,0,0"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=(local:ItemHelper.IsChecked)}" Value="False" >
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                    <Setter Property="Margin" Value="0,6,0,0"/>
+                                                    <Setter Property="Background" Value="Transparent"/>
+                                                </DataTrigger>
+
+                                            </Style.Triggers>
+                                            <Style.Resources>
+                                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#428af5"/>
+                                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                                            </Style.Resources>
+                                        </Style>
+                                    </CheckBox.Style>
+                                </CheckBox>
+                            </HierarchicalDataTemplate>
+                            <DataTemplate DataType="{x:Type local:Person}" >
+                                <CheckBox Content="{Binding Name}" FontFamily="Calibri" FontSize="16"   Checked="Checked_PrintCrew_Click" Unchecked="UnChecked_PrintCrew_Click" IsChecked="{Binding Path=(local:ItemHelper.IsChecked), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                                    <CheckBox.Style>
+                                        <Style TargetType="{x:Type CheckBox}">
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=(local:ItemHelper.IsChecked)}" Value="False" >
+                                                    <Setter Property="Foreground" Value="LightGray"/>
+                                                    <Setter Property="Margin" Value="0,6,0,0"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=(local:ItemHelper.IsChecked)}" Value="True" >
+                                                    <Setter Property="Foreground" Value="LightGray"/>
+                                                    <Setter Property="Margin" Value="0,6,0,0"/>
+                                                   
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                            <Style.Resources>
+                                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent"/>
+                                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                                            </Style.Resources>
+                                        </Style>
+                                    </CheckBox.Style>
+                                </CheckBox>
+                            </DataTemplate>
+                        </TreeView.Resources>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="{Binding Path=(local:ItemHelper.IsExpanded), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <Setter Property="IsSelected" Value="False"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Style.Resources>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent"/>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                                </Style.Resources>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                    </TreeView>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Grid DockPanel.Dock="Bottom" x:Name="bottompnl" Height="200" Margin="0,0,0,35"  Background="#000000" >
+
+            <Grid Height="40" VerticalAlignment="Top"  Margin="0,0,0,0"  Background="#263238" Grid.Row="0">
+
+                <Button Panel.ZIndex="2" Name="AddtoCart" ToolTip="Add to Basket" HorizontalAlignment="Left" Margin="15,0,0,1" HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="130" Height="30" BorderBrush="#FFF9F2F2" Click="AddtoCart_Click" Style="{StaticResource MyButton1}">
+                    <Button.Background>
+                        <SolidColorBrush Color="#FF309C33" Opacity="1"/>
+                    </Button.Background>
+                    <Grid>
+
+                        <Image Source="/Icons/cart.png" HorizontalAlignment="Left" Margin="-15,0,0,0" />
+                        <TextBlock Text="Add to Basket"  FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" 
+                                   Foreground="White" VerticalAlignment="Center" Margin="13,5,0,6" FontFamily="Calibri" Grid.Row="1">
+                        </TextBlock>
+                    </Grid>
+                </Button>
+                <Button Panel.ZIndex="2" Name="Clear" ToolTip="Clear Selection" Click="ClearButtonClick"  HorizontalAlignment="Left" Margin="150,0,0,1" HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="130" Height="30" BorderBrush="#FFF9F2F2" Style="{StaticResource MyButton1}">
+                    <Button.Background>
+                        <SolidColorBrush Color="#FF309C33" Opacity="1"/>
+                    </Button.Background>
+                    <Grid>
+                        <Image Source="/Icons/Clear.png" HorizontalAlignment="Left"/>
+                        <TextBlock Text="Clear Selection"  FontSize="13" FontWeight="Bold" Foreground="White" 
+                         VerticalAlignment="Center" Margin="30,6,0,6" FontFamily="Calibri"/>
+                    </Grid>
+                </Button>
+                <Button Panel.ZIndex="2" Name="Checkout" ToolTip="Check Out"  HorizontalAlignment="Right" Click="btnTopMenuShow_Click"  Margin="0,0,10,1" HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="120" Height="30" BorderBrush="#FFF9F2F2" Grid.Column="1" Style="{StaticResource MyButton1}">
+
+                    <Button.Background>
+                        <SolidColorBrush Color="#FF309C33" Opacity="1"/>
+                    </Button.Background>
+                    <Grid>
+                        <Image Source="/Icons/Checkout.png" HorizontalAlignment="Left"/>
+                        <TextBlock Text="Check Out"  FontSize="13" FontWeight="Bold" FontFamily="Calibri" HorizontalAlignment="Right" Foreground="White" VerticalAlignment="Center" Margin="35,0,0,0">
+                        </TextBlock>
+                    </Grid>
+                </Button>
+            </Grid>
+
+            <Grid x:Name="Folioscroll" Visibility="Visible"  ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,40,0,5" Height="{Binding Path=ActualHeight, 
+           RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=GridViewRowPresenter}}"   Panel.ZIndex="2"  Grid.Row="1">
+                <DataGrid Panel.ZIndex="10" Visibility="Hidden" IsReadOnly="True" BorderBrush="Transparent" GridLinesVisibility="None"  AutoGenerateColumns="False" CanUserAddRows="False" BorderThickness="0"  Width="auto"
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Left" CellStyle="{StaticResource Body_Content_DataGrid_Centering}"
+                      Name="dataGrid2" VerticalAlignment="Top" Height="auto"  RowDetailsVisibilityChanged="dataGrid1_RowDetailsVisibilityChanged" SelectionMode="Single" SelectionUnit="CellOrRowHeader">
+                    <DataGrid.Background>
+                        <SolidColorBrush Color="Transparent" Opacity="0"/>
+                    </DataGrid.Background>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="FontSize" Value="14"/>
+                            <Setter Property="FontFamily" Value="Calibri"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                            <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                            <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                            <Setter Property="Height"  Value="Auto"/>
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#428af5"/>
+                            </Style.Resources>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Scroll Chart" Width="1*" >
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="Height"  Value="40"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button x:Name="folioSearch" Background="Transparent"  BorderBrush="Transparent" Style="{StaticResource MyButton}" Click="folioSearch_Click">
+                                        <Image Source="/Icons/search.png" Width="25"/>
+                                        
+                                    </Button>
+                                    
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="DeSelect" Width="1*">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="remove1" Background="Transparent" BorderBrush="Transparent" Style="{StaticResource MyButton}">
+                                        <Image Source="/Icons/close_2.png" Width="25"/>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Basket" x:Name="FIsBasket" Width="1*" >
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                  
+                                        <Image Source="/Icons/cart.png" Width="25"/>
+                                    
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellStyle>
+                                <Style TargetType="{x:Type DataGridCell}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Exists}" Value="Exists">
+                                            <Setter Property="Visibility" Value="Visible">
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Exists}" Value="NotExists">
+                                            <Setter Property="Visibility" Value="Hidden">
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGridTemplateColumn.CellStyle>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Width="1*"
+				                    Binding="{Binding FProductId}"
+				                    Header="Product Id" >
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="20,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Width="4*"
+				                    Binding="{Binding FTitle}"
+				                    Header="Title">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="20,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTemplateColumn Width="2*" >
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="Height"  Value="40"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="view" Background="Transparent" BorderBrush="Transparent" Style="{StaticResource MyButton}">
+                                        <TextBlock Text="View"  FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" 
+                                   Foreground="White" VerticalAlignment="Center" Margin="13,5,0,6" FontFamily="Calibri" Grid.Row="1"></TextBlock>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+            <Grid x:Name="AVCSscroll" ScrollViewer.VerticalScrollBarVisibility="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="0,40,0,0"
+                 Height="{Binding Path=ActualHeight,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=GridViewRowPresenter}}" 
+                  Panel.ZIndex="1"  Grid.Row="1" >
+
+                <DataGrid Panel.ZIndex="10" GridLinesVisibility="None" IsReadOnly="True" BorderBrush="Transparent" AutoGenerateColumns="False" CanUserAddRows="False" BorderThickness="0" 
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False"
+                      Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Left" CellStyle="{StaticResource Body_Content_DataGrid_Centering}"
+                      Name="dataGrid1" VerticalAlignment="Top" Width="auto"  Height="auto" SelectionUnit="CellOrRowHeader" SelectionMode="Single"  >
+                    <DataGrid.Background>
+                        <SolidColorBrush Color="Transparent" Opacity="0"/>
+                    </DataGrid.Background>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="FontFamily" Value="Calibri"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                            <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                            <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                            <Setter Property="Height"  Value="30"/>
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#428af5"/>
+                            </Style.Resources>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Scroll Chart" Width="1*" >
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="Height"  Value="40"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Height"  Value="30"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button  Background="Transparent" BorderBrush="Transparent" Style="{StaticResource MyButton}" Click="Button_Click">
+                                        <Image Source="/Icons/search.png" Width="25"/>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="DeSelect" Width="1*">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Height"  Value="30"/>
+
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="remove" Background="Transparent" BorderBrush="Transparent" Style="{StaticResource MyButton}">
+                                        <Image Source="/Icons/close_2.png" Width="25"/>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Basket" x:Name="IsBasket" Width="1*" >
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Height"  Value="30"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button  Background="Transparent" BorderBrush="Transparent" Style="{StaticResource MyButton}">
+                                        <Image Source="/Icons/cart.png" Width="25"/>
+                                        
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellStyle>
+                                <Style TargetType="{x:Type DataGridCell}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Exists}" Value="Exists">
+                                            <Setter Property="Visibility" Value="Visible">
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Exists}" Value="NotExists">
+                                            <Setter Property="Visibility" Value="Hidden">
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGridTemplateColumn.CellStyle>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn x:Name="shortname" Header="Product Name" Width="1*" Binding="{Binding ShortName}">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                    <Setter Property="Height"  Value="30"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn x:Name="Title" Header="Title" Width="3*" Binding="{Binding Title}">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                    <Setter Property="Height"  Value="30"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn x:Name="Band" Header="Band" Width="1*" Binding="{Binding Usage}">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                    <Setter Property="Height"  Value="30"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn x:Name="Status" Header="Status" Width="1*">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                    <Setter Property="Height"  Value="30"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Grid>
+
+        <osc:DockPanelSplitter DockPanel.Dock="Bottom" Name="bottomspliter" BorderBrush="#000000" Background="#000000"  Thickness="10" MouseEnter="bottomspliter_MouseEnter" MouseLeave="bottomspliter_MouseLeave"  />
+
+        <Grid Background="#33A1FF" >
+            <Border BorderThickness="3"   BorderBrush="Black" CornerRadius="5" Margin="10,5,0,0" Width="332" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="30">
+                <StackPanel  Name="dragpnl" Panel.ZIndex="30"   Height="50" Opacity="0.9"  Margin="0,0,0,0" Width="330" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" 
+                        Background="#000000" >
+               
+                    <Grid>
+                    <Menu HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="20,0,0,0" Height="30" Background="Transparent"
+                          BorderBrush="White" BorderThickness="1" Foreground="White"
+                          VerticalAlignment="Center">
+                        <MenuItem Background="#FF309C33">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="/Icons/map-5-512.png" Width="25"/>
+                                    <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="16" FontWeight="Bold" FontFamily="Calibri">_Route</Label>
+                                </StackPanel>
+                            </MenuItem.Header>
+                            <MenuItem Header="_New" x:Name="new"  Click="new_Click" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/plus_1.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="_Load" x:Name="load" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="load_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/folderIcon.png" Width="25" Height="25" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="_Save"  Name="savemenu" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="save_Click" IsEnabled="False">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/Save.png" Width="20" Height="25" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="_Export Route Line" x:Name="ExportRoute" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="ExportRoute_Click"  >
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/cursor.png" Width="18" Height="20" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="_Import Route Line" x:Name="Import" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="Import_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/cursor.png" Width="18" Height="20" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+
+                            <MenuItem Header="_Clear" x:Name="clear" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="clear_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/clear.png" Width="18" Height="20" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="_Product Under Route" x:Name="UnderRoot" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="UnderpolylineRoot_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/cursor.png" Width="18" Height="20" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                                <MenuItem Header="_Edit Route Line" x:Name="EditRoot" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="EditButton_Click_new">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/cursor.png" Width="18" Height="20" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="_Undo Route Line" x:Name="UndoRoot" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="UndoButton_click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/cursor.png" Width="18" Height="20" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="_Redo Route Line" x:Name="RedoRoot" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="Redobutton_click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/cursor.png" Width="18" Height="20" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                    </Menu>
+
+
+                    <Menu HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="120,0,0,0" Height="30" Background="Transparent"
+                          BorderBrush="White" BorderThickness="1" Foreground="White"
+                          VerticalAlignment="Center">
+                        <MenuItem Background="#FF309C33">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="/Icons/Tool.png" Width="25"/>
+                                    <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="16" FontWeight="Bold" FontFamily="Calibri">_Tools</Label>
+                                </StackPanel>
+                            </MenuItem.Header>
+                            <MenuItem Header="_Rectangle" x:Name="rectangle" Background="#263238" BorderThickness="0."  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30"  Click="rectangle_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/plus_1.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="_Polygons" x:Name="polygon"  Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="polygon_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/plus_1.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+
+                            <MenuItem Header="_Product Under Selection" x:Name="UnderTool" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="UnderRoot_Click" >
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/cursor.png" Width="18" Height="20" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+
+                            <MenuItem Header="_Clear" x:Name="clear1" Background="#263238"  FontSize="16" FontWeight="Bold" FontFamily="Calibri" Foreground="White" Height="30" Click="clear_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/clear.png" Width="18" Height="20" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+
+                    <Button  Name="strsearch" Background="#FF309C33" HorizontalAlignment="Right" BorderBrush="Transparent"  Height="29" VerticalAlignment="Top" Width="84" Margin="215,10,0,0"  Style="{StaticResource MyButton1}" Click="strsearch_Click">
+                        <Grid>
+                            <Image Source="/Icons/search.png" HorizontalAlignment="Left"/>
+                            <TextBlock Text="Search"  FontSize="12" FontWeight="Bold" HorizontalAlignment="Right" 
+                                   Foreground="White" VerticalAlignment="Center" Margin="30,0,0,0" FontFamily="Calibri">
+                            </TextBlock>
+                        </Grid>
+                    </Button>
+                </Grid>
+                
+            </StackPanel>
+            </Border>
+            <StackPanel  Name="searchpnl" Panel.ZIndex="30" Visibility="Hidden"  Height="50" Opacity="0.8"  Margin="10,60,10,0" Width="330" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" 
+                        Background="#263238" >
+
+                <Grid>
+                    <Button Panel.ZIndex="4" Name="searchhide" HorizontalAlignment="Right"  Margin="0,0,-30,0" HorizontalContentAlignment="Center" VerticalAlignment="Top" Width="20" Height="20" Click="searchhide_Click">
+                        <Button.BorderBrush>
+                            <SolidColorBrush Color="#FF309C33" Opacity="1"/>
+                        </Button.BorderBrush>
+                        <Image Source="/Icons/close_2.png" Width="30"/>
+                        <Button.Background>
+                            <SolidColorBrush Color="#FFDDDDDD" Opacity="0"/>
+                        </Button.Background>
+                    </Button>
+
+                </Grid>
+            </StackPanel>
+            <StackPanel  Name="ZoomPnl"  Panel.ZIndex="30"  Height="220" Opacity="1"  Margin="0,0,05,20" Width="100"  Orientation="Horizontal"  HorizontalAlignment="Right"  VerticalAlignment="Bottom" 
+                        Background="Transparent">
+                <Grid>
+                    <Button  Name="PanUp" HorizontalAlignment="Right" BorderBrush="Transparent" Background="Transparent" VerticalAlignment="Top" Width="40" Margin="0,10,45,0" Click="PanUp_Click" Style="{StaticResource MyButton}">
+                        <Image Source="/Icons/arrow2.png" Width="40"/>
+                    </Button>
+                    <Button  Name="PanDown" HorizontalAlignment="Right" BorderBrush="Transparent" Background="Transparent" VerticalAlignment="Top" Width="40" Margin="0,70,45,0" Click="PanDown_Click" Style="{StaticResource MyButton}">
+                        <Image Source="/Icons/arrow4.png" Width="40"/>
+                    </Button>
+                    <Button  Name="PanRight" HorizontalAlignment="Right" BorderBrush="Transparent" Background="Transparent" VerticalAlignment="Top" Width="40"  Margin="0,40,15,0" Click="PanRight_Click" Style="{StaticResource MyButton}">
+                        <Image Source="/Icons/arrow3.png" Width="40"/>
+                    </Button>
+                    <Button  Name="PanLeft" HorizontalAlignment="Right" BorderBrush="Transparent" Background="Transparent" VerticalAlignment="Top" Width="40" Margin="0,40,75,0" Click="PanLeft_Click" Style="{StaticResource MyButton}">
+                        <Image Source="/Icons/arrow1.png" Width="40"/>
+                    </Button>
+                    <Button  Name="zoomIn" HorizontalAlignment="Left"  BorderBrush="Transparent" Background="Transparent" VerticalAlignment="Top" Margin="30,135,0,0" Click="zoomIn_Click" Style="{StaticResource MyButton}">
+                        <Image Source="/Icons/plus.png" Width="40" />
+                    </Button>
+                    <Button  Name="zoomout" HorizontalAlignment="Left" BorderBrush="Transparent" Background="Transparent" VerticalAlignment="Top"  Margin="30,170,0,0" Click="zoomout_Click" Style="{StaticResource MyButton}">
+                        <Image Source="/Icons/minus.png" Width="40" />
+                    </Button>
+                    
+                </Grid>
+            </StackPanel>
+            <StackPanel Panel.ZIndex="2" Name="pnlRightMenu" Visibility="Hidden"  Opacity="0.8" Height="250" Width="150" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,40,-150,0"  Background="#000000">
+                <Grid>
+                    <Button Panel.ZIndex="2" Name="Checkouthide" HorizontalAlignment="Left"  Click="btnCheckouthide_Click"  Margin="0,0,10,0" HorizontalContentAlignment="Center" VerticalAlignment="Top" Width="30" Height="30" Style="{StaticResource MyButton}" >
+                        <Button.BorderBrush>
+                            <SolidColorBrush Color="#FFF9F2F2" Opacity="0"/>
+                        </Button.BorderBrush>
+                        <Image Source="/Icons/closeright.png" Width="40"/>
+                        <Button.Background>
+                            <SolidColorBrush Color="#FFDDDDDD" Opacity="0"/>
+                        </Button.Background>
+                    </Button>
+                    <ListBox  Name="mylistbox" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,25,0,0" HorizontalAlignment="Center" Foreground="White"  Background="Transparent" SelectionChanged="mylistbox_SelectionChanged" MouseDoubleClick="mylistbox_MouseDoubleClick" >
+                        <ListBox.BorderBrush>
+                            <SolidColorBrush Color="#FFABADB3" Opacity="0"/>
+                        </ListBox.BorderBrush>
+                    </ListBox>
+                </Grid>
+            </StackPanel>
+            <Grid Panel.ZIndex="200" Name="pnlRightRoute"   Opacity="0.9" Height="Auto" Width="450"  VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,-450,0"  Background="#000000">
+
+                <Button Panel.ZIndex="4" Name="Routehide" HorizontalAlignment="Left"  Click="btnRoutehide_Click"  Margin="0,0,10,0" HorizontalContentAlignment="Center" VerticalAlignment="Top" Width="40" Height="40" Style="{StaticResource MyButton}">
+                    <Button.BorderBrush>
+                            <SolidColorBrush Color="#FF309C33" Opacity="1"/>
+                        </Button.BorderBrush>
+                        <Image Source="/Icons/closeright.png" Width="50"/>
+                        <Button.Background>
+                            <SolidColorBrush Color="#FFDDDDDD" Opacity="0"/>
+                        </Button.Background>
+                    </Button>
+                    <Button Panel.ZIndex="3" Name="RouteRemove" HorizontalAlignment="Right" Margin="0,20,20,0" Content="Remove" Style="{StaticResource MyButton1}"
+                        Foreground="White" Background="#FF309C33"  VerticalAlignment="Top" Width="100" Height="30" Click="RouteRemove_Click" >
+                    </Button>
+
+                    <DataGrid Panel.ZIndex="10"  AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" BorderThickness="0"  GridLinesVisibility="None"
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CellStyle="{StaticResource Body_Content_DataGrid_Centering}"
+                      Grid.Row="1" Margin="0,50,0,0" HorizontalAlignment="Left"  Width="auto" BorderBrush="Transparent" 
+                      Name="RouteGrid" VerticalAlignment="Top" Height="800" MinHeight="130" 
+                      SelectionChanged="RouteGrid_SelectionChanged"  HorizontalGridLinesBrush="#FFFDF9F9" VerticalGridLinesBrush="#FFF7F1F1">
+                        <DataGrid.Background>
+                            <SolidColorBrush Color="Transparent" Opacity="0"/>
+                        </DataGrid.Background>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="FontSize" Value="12"/>
+                                <Setter Property="FontFamily" Value="Calibri"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                <Setter Property="VerticalContentAlignment" Value="Center" />
+                                <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                                <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                                <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                                <Setter Property="Height"  Value="40"/>
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#428af5"/>
+                            </Style.Resources>
+                        </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Visibility="Hidden" Binding="{Binding ID}">
+                                <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="Height"  Value="40"/>
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn x:Name="RoutName" Header="Route Name"  Binding="{Binding RouteName}" Width="3*">
+                                <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="Height"  Value="40"/>
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn x:Name="WayPCount" Header="Way Point"  Binding="{Binding WayPoint}" Width="3*">
+                                <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="Height"  Value="40"/>
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn x:Name="LastDate" Header="Modified Date"  Binding="{Binding CreatedDate}" Width="4*">
+                                <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="Height"  Value="40"/>
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+            </Grid>
+            <Grid x:Name="micsgrid" Panel.ZIndex="50" Margin="20,20,40,20" Opacity="1" MinWidth="500" MaxWidth="850" HorizontalAlignment="Center" Background="#000000" Visibility="Hidden" >
+                <TextBlock Foreground="White" FontSize="16" Margin="20,10,0,0" TextWrapping="Wrap" Text="The following items cannot be displayed on geographical display.Please select the items you required and manage them using table below"/>
+
+                <DataGrid  GridLinesVisibility="None" Panel.ZIndex="50" IsReadOnly="True" Width="auto" BorderBrush="Transparent" AutoGenerateColumns="False" CanUserAddRows="False" BorderThickness="0" 
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" Margin="0,65,0,0"
+                      Grid.Row="1" HorizontalAlignment="Left" CellStyle="{StaticResource Body_Content_DataGrid_Centering}"
+                      Name="datagridmisc" VerticalAlignment="Top"  Height="auto" SelectionMode="Single" SelectionChanged="datagridmisc_SelectionChanged"  >
+                    <DataGrid.Background>
+                        <SolidColorBrush Color="Transparent" Opacity="0"/>
+                    </DataGrid.Background>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="FontFamily" Value="Calibri"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                            <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                            <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                            <Setter Property="Height"  Value="30"/>
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#428af5"/>
+                            </Style.Resources>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:Name="productname" Header="Product Id" Width="1*" Binding="{Binding ProductName}">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                    <Setter Property="Height"  Value="30"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn x:Name="pTitle" Header="Title" Width="7*" Binding="{Binding DatasetTitle}">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn x:Name="pstatus" Width="2*" >
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+
+            </Grid>
+            <Grid x:Name="SaveRouteName" Panel.ZIndex="50"  VerticalAlignment="Center" HorizontalAlignment="Center" Width="500" Height="300" Margin="50,50,50,50" Opacity="0.9" Background="#000000" Visibility="Hidden" >
+                <StackPanel  Name="header"  Panel.ZIndex="30"  Height="40" Opacity="1"  Width="auto"    VerticalAlignment="Top" Background="#263238">
+                <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="Please Enter Route Name to Save Route Line"/>
+                    <Button Panel.ZIndex="4" Name="SaveRoutehide" HorizontalAlignment="Right"  Margin="0,-30,3,0" HorizontalContentAlignment="Right" VerticalAlignment="Center" Width="20" Height="20" Click="SaveRoutehide_Click" >
+                        <Button.BorderBrush>
+                            <SolidColorBrush Color="Transparent" Opacity="0"/>
+                        </Button.BorderBrush>
+                        <Image Source="/Icons/close_2.png" Height="30"/>
+                        <Button.Background>
+                            <SolidColorBrush Color="#FFDDDDDD" Opacity="0"/>
+                        </Button.Background>
+                    </Button>
+                </StackPanel>
+                <TextBox HorizontalAlignment="Left" Name="txtRouteName" FontSize="16" FontFamily="Calibri" VerticalContentAlignment="Center"  TextWrapping="Wrap" Text="" Margin="100,130,0,0" Height="30" VerticalAlignment="Top" Width="230" Grid.Row="1"/>
+                <Button Panel.ZIndex="3" Content="Save" Name="btnSaveRout" HorizontalAlignment="Left" Margin="335,130,0,0"  Style="{StaticResource MyButton1}"
+                        Foreground="White" Background="#FF309C33"  VerticalAlignment="Top" Width="50" Height="29" Grid.Row="1" Click="btnSaveRout_Click"  >
+                   
+                </Button>
+
+                <Button Panel.ZIndex="3" Content="Cancel" Name="btnRouteClose" HorizontalAlignment="Right" Margin="0,0,30,20"  Style="{StaticResource MyButton1}"
+                        Foreground="White" Background="#FF309C33"  VerticalAlignment="Bottom" Width="80" Height="29" Grid.Row="1" Click="btnRouteClose_Click"  >
+                </Button>
+            </Grid>
+
+            <Grid x:Name="chkgrid" Panel.ZIndex="50" Margin="50,20,50,20" Opacity="1" Background="#000000"  MinWidth="500" MaxWidth="850" HorizontalAlignment="Center" Visibility="Hidden" >
+                <Grid  Width="auto">
+
+                    <Button Panel.ZIndex="3" Name="Export" HorizontalAlignment="Left" Margin="30,10,0,0" Content="Export" Style="{StaticResource MyButton1}"
+                        Foreground="White" Background="#FF309C33"  VerticalAlignment="Top" Width="100" Height="30" Click="Export_Click" >
+                    </Button>
+
+                    <Button Panel.ZIndex="3" Name="Checkouthide1" HorizontalAlignment="Right"  Click="btnCheckouthide1_Click"  Margin="0,0,10,0" Style="{StaticResource MyButton}" HorizontalContentAlignment="Center" VerticalAlignment="Top" Width="30" Height="30">
+                        <Button.BorderBrush>
+                            <SolidColorBrush Color="Transparent" Opacity="1"/>
+                        </Button.BorderBrush>
+                        <Image Source="/Icons/close_2.png" />
+                        <Button.Background>
+                            <SolidColorBrush Color="#FFDDDDDD" Opacity="0"/>
+                        </Button.Background>
+                    </Button>
+
+                    <Button Panel.ZIndex="3" Name="RemoveAll" HorizontalAlignment="Right" Margin="0,10,55,0" Content="Remove" Style="{StaticResource MyButton1}"
+                        Foreground="White" Background="#FF309C33"  VerticalAlignment="Top" Width="100" Height="30" Click="RemoveAll_Click">
+                    </Button>
+                    <Button Panel.ZIndex="3" Name="SelectAll" HorizontalAlignment="Right" Margin="0,10,170,0" Content="Select All" Style="{StaticResource MyButton1}"
+                        Foreground="White" Background="#FF309C33"  VerticalAlignment="Top" Width="100" Height="30" Click="SelectAll_Click">
+
+                    </Button>
+
+                    <TabControl Name="tabcontroler"   Background="Transparent"  Margin="10,50,0,0" >
+                        <TabItem Name="avcs_tab" Width="80" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Visibility="Hidden" Header="AVCS"  Foreground="White" Background="#263238" Height="22" BorderBrush="Transparent" >
+                            <DataGrid Panel.ZIndex="10"  AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" BorderThickness="0"  GridLinesVisibility="None"
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CellStyle="{StaticResource Body_Content_DataGrid_Centering}"
+                      Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Left"
+                      Name="checkoutGrid" VerticalAlignment="Top" Width="auto" BorderBrush="Transparent"  Height="auto" MinHeight="130" SelectionChanged="checkoutGrid_SelectionChanged" >
+                                <DataGrid.Background>
+                                    <SolidColorBrush Color="Transparent" Opacity="0"/>
+                                </DataGrid.Background>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="FontFamily" Value="Calibri"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                                        <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                                        <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                                        <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                                        <Setter Property="Height"  Value="40"/>
+                                        <Style.Resources>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"  Color="#428af5"/>
+                                        </Style.Resources>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn x:Name="UnitId" Header="Unit Id"  Binding="{Binding UnitId}" Width="2*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn x:Name="chk_Title" Header="Title"  Binding="{Binding UnitTitle}" Width="8*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="ADLL" Name="adll_tab" Visibility="Hidden"   Foreground="White" Background="#263238" Height="22" Width="80" HorizontalContentAlignment="Center"  BorderBrush="Transparent" >
+                            <DataGrid Panel.ZIndex="10"  AutoGenerateColumns="False" CanUserAddRows="False" BorderThickness="0"  GridLinesVisibility="None"
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" IsReadOnly="True" CanUserReorderColumns="False" CellStyle="{StaticResource Body_Content_DataGrid_Centering}"
+                      Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Left"
+                      Name="checkoutGrid1" VerticalAlignment="Top" Width="auto" BorderBrush="Transparent"  Height="auto" MinHeight="130" SelectionChanged="checkoutGrid1_SelectionChanged" >
+                                <DataGrid.Background>
+                                    <SolidColorBrush Color="Transparent" Opacity="0"/>
+                                </DataGrid.Background>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="FontFamily" Value="Calibri"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                                        <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                                        <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                                        <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                                        <Setter Property="Height"  Value="40"/>
+                                        <Style.Resources>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#428af5"/>
+                                        </Style.Resources>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.Columns>
+
+                                    <DataGridTextColumn  Header="Product Id"  Binding="{Binding ShortName}" Width="2*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn  Header="Title"  Binding="{Binding Title}" Width="8*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="ADRS" x:Name="adrs_tab" Visibility="Hidden"  Foreground="White" Width="80" HorizontalContentAlignment="Center" Background="#263238" Height="22" BorderBrush="Transparent" >
+                            <DataGrid Panel.ZIndex="10"  AutoGenerateColumns="False" CanUserAddRows="False" BorderThickness="0"  GridLinesVisibility="None"
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" IsReadOnly="True" CanUserReorderColumns="False" CellStyle="{StaticResource Body_Content_DataGrid_Centering}"
+                      Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Left"
+                      Name="checkoutGrid2" VerticalAlignment="Top" Width="auto" BorderBrush="Transparent"  Height="auto" MinHeight="130" SelectionChanged="checkoutGrid2_SelectionChanged" >
+                                <DataGrid.Background>
+                                    <SolidColorBrush Color="Transparent" Opacity="0"/>
+                                </DataGrid.Background>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="FontFamily" Value="Calibri"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                                        <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                                        <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                                        <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                                        <Setter Property="Height"  Value="40"/>
+                                        <Style.Resources>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#428af5"/>
+                                        </Style.Resources>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.Columns>
+
+                                    <DataGridTextColumn  Header="Product Id"  Binding="{Binding ShortName}" Width="2*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn  Header="Title"  Binding="{Binding Title}" Width="8*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="e-NP" Name="enp_tab" Visibility="Hidden" Width="80" HorizontalContentAlignment="Center"  Foreground="White" Background="#263238" Height="22" BorderBrush="Transparent" >
+                            <DataGrid Panel.ZIndex="10"  AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" BorderThickness="0"  GridLinesVisibility="None"
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CellStyle="{StaticResource Body_Content_DataGrid_Centering}"
+                      Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Left"
+                      Name="checkoutGrid3" VerticalAlignment="Top" Width="auto" BorderBrush="Transparent"  Height="auto" MinHeight="130" SelectionChanged="checkoutGrid3_SelectionChanged" >
+                                <DataGrid.Background>
+                                    <SolidColorBrush Color="Transparent" Opacity="0"/>
+                                </DataGrid.Background>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="FontFamily" Value="Calibri"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                                        <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                                        <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                                        <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                                        <Setter Property="Height"  Value="40"/>
+                                        <Style.Resources>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#428af5"/>
+                                        </Style.Resources>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.Columns>
+
+                                    <DataGridTextColumn  Header="Product Id"  Binding="{Binding ShortName}" Width="2*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn  Header="Title"  Binding="{Binding Title}" Width="8*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Miscellaneous" Name="misc_tab" Width="80" HorizontalContentAlignment="Center"  Visibility="Hidden"  Foreground="White" Background="#263238" Height="22" BorderBrush="Transparent" >
+                            <DataGrid Panel.ZIndex="10"  AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" BorderThickness="0"  GridLinesVisibility="None"
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CellStyle="{StaticResource Body_Content_DataGrid_Centering}"
+                      Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Left"
+                      Name="checkoutGrid4" VerticalAlignment="Top" Width="auto" BorderBrush="Transparent"  Height="auto" MinHeight="130" SelectionChanged="checkoutGrid4_SelectionChanged" >
+                                <DataGrid.Background>
+                                    <SolidColorBrush Color="Transparent" Opacity="0"/>
+                                </DataGrid.Background>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="FontFamily" Value="Calibri"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                                        <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                                        <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                                        <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                                        <Setter Property="Height"  Value="40"/>
+                                        <Style.Resources>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#428af5"/>
+                                        </Style.Resources>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn  Header="Product Id"  Binding="{Binding ShortName}" Width="2*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn  Header="Title"  Binding="{Binding Title}" Width="8*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Tides" Name="tides_tab" Width="80" HorizontalContentAlignment="Center"  Visibility="Hidden" Foreground="White" Background="#263238" Height="22" BorderBrush="Transparent" >
+                            <DataGrid Panel.ZIndex="10"  AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" BorderThickness="0"  GridLinesVisibility="None"
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CellStyle="{StaticResource Body_Content_DataGrid_Centering}"
+                      Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Left"
+                      Name="checkoutGrid5" VerticalAlignment="Top" Width="auto" BorderBrush="Transparent"  Height="auto" MinHeight="130" SelectionChanged="checkoutGrid5_SelectionChanged" >
+                                <DataGrid.Background>
+                                    <SolidColorBrush Color="Transparent" Opacity="0"/>
+                                </DataGrid.Background>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="FontFamily" Value="Calibri"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                                        <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                                        <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                                        <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                                        <Setter Property="Height"  Value="40"/>
+                                        <Style.Resources>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#428af5"/>
+                                        </Style.Resources>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn  Header="Product Id"  Binding="{Binding ShortName}" Width="2*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn  Header="Title"  Binding="{Binding Title}" Width="8*">
+                                        <DataGridColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#263238"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontFamily" Value="Calibri"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                <Setter Property="Height"  Value="40"/>
+                                                <Setter Property="BorderThickness"  Value="0.5"/>
+                                                <Setter Property="Padding"  Value="10,0,0,0"/>
+                                            </Style>
+                                        </DataGridColumn.HeaderStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                    </TabControl>
+
+                </Grid>
+
+            </Grid>
+
+            <Grid x:Name="foliodetails" Panel.ZIndex="50" Margin="50,20,50,20" Opacity="1" Background="#000000"  MinWidth="500" MaxWidth="850" HorizontalAlignment="Center" Visibility="Hidden" >
+
+                <Button Panel.ZIndex="3" Name="detailshide" HorizontalAlignment="Right"  Click="detailshide_Click"  Margin="0,0,10,0" Style="{StaticResource MyButton}" HorizontalContentAlignment="Center" VerticalAlignment="Top" Width="30" Height="30">
+                    <Button.BorderBrush>
+                        <SolidColorBrush Color="Transparent" Opacity="1"/>
+                    </Button.BorderBrush>
+                    <Image Source="/Icons/close_2.png" />
+                    <Button.Background>
+                        <SolidColorBrush Color="#FFDDDDDD" Opacity="0"/>
+                    </Button.Background>
+                </Button>
+
+                <DataGrid Name="foliodetailgrid" Panel.ZIndex="10"  GridLinesVisibility="None" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" VerticalScrollBarVisibility="Auto"  CanUserAddRows="False" BorderThickness="0" BorderBrush="Transparent" 
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False"
+                      Grid.Row="1" Margin="0,30,0,0" HorizontalAlignment="Left" CellStyle="{StaticResource Body_Content_DataGrid_Centering}" ItemsSource="{Binding DetailsItems}" AutoGenerateColumns="False" SelectionMode="Single">
+                    <DataGrid.Background>
+                        <SolidColorBrush Color="Transparent" Opacity="0"/>
+                    </DataGrid.Background>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="FontSize" Value="14"/>
+                            <Setter Property="FontFamily" Value="Calibri"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                            <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                            <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                            <Setter Property="Height"  Value="Auto"/>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn  Header="Product Id" Width="3*" Binding="{Binding ProductId}">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                    <Setter Property="Height"  Value="30"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Header="Title" Width="5*" Binding="{Binding Title}">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                    <Setter Property="Height"  Value="30"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Header="Band" Width="2*" Binding="{Binding Band}">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                    <Setter Property="Height"  Value="30"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                       
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+            <Grid Panel.ZIndex="200" Name="pnlRightSearch"   Opacity="0.9" Height="Auto" Width="450"  VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,-450,0"  Background="#000000">
+
+                <Button Panel.ZIndex="4" Name="SearchRighthide" HorizontalAlignment="Left"  Click="SearchRighthide_Click"  Margin="0,0,10,0" HorizontalContentAlignment="Center" VerticalAlignment="Top" Width="40" Height="40" Style="{StaticResource MyButton}">
+                    <Button.BorderBrush>
+                        <SolidColorBrush Color="#FF309C33" Opacity="0"/>
+                    </Button.BorderBrush>
+                    <Image Source="/Icons/closeright.png" Width="50"/>
+                    <Button.Background>
+                        <SolidColorBrush Color="#FFDDDDDD" Opacity="0"/>
+                    </Button.Background>
+                </Button>
+
+                <TextBox HorizontalAlignment="Left" Name="txtSearch" VerticalContentAlignment="Center"  Text="" Margin="0,50,0,0" Height="35" VerticalAlignment="Top" FontSize="16" FontFamily="Calibri" Width="400" Grid.Row="1"/>
+                <Button Panel.ZIndex="3" Name="btnsearh" HorizontalAlignment="Right" Margin="0,50,0,0"  Style="{StaticResource MyButton1}"
+                        Foreground="White" Background="#263238"  VerticalAlignment="Top" Width="50" Height="35" Grid.Row="1" Click="btnsearh_Click" >
+                    <Image Source="/Icons/search.png" HorizontalAlignment="Left"/>
+                </Button>
+
+                <DataGrid Panel.ZIndex="10"  AutoGenerateColumns="False" IsReadOnly="True"  CanUserAddRows="False" BorderThickness="0"  GridLinesVisibility="None"
+                      CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CellStyle="{StaticResource Body_Content_DataGrid_Centering}"
+                      Grid.Row="1" Margin="0,90,0,0" HorizontalAlignment="Left"  Width="auto" BorderBrush="Transparent" 
+                      Name="SearchGrid" VerticalAlignment="Top" Height="800" MinHeight="130" 
+                       HorizontalGridLinesBrush="#FFFDF9F9" VerticalGridLinesBrush="#FFF7F1F1" SelectionUnit="CellOrRowHeader" SelectionMode="Single">
+                    <DataGrid.Background>
+                        <SolidColorBrush Color="Transparent" Opacity="0"/>
+                    </DataGrid.Background>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="FontFamily" Value="Calibri"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="Grid.ShowGridLines"  Value="False"/>
+                            <Setter Property="Grid.HorizontalAlignment"  Value="Center" />
+                            <Setter Property="Grid.VerticalAlignment" Value="Center" />
+                            <Setter Property="Height"  Value="40"/>
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#428af5"/>
+                            </Style.Resources>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Scroll Chart" Width="2*" >
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="Height"  Value="40"/>
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Name="btnrightsearh"  Background="Transparent" BorderBrush="Transparent" Style="{StaticResource MyButton}" Click="btnrightsearh_Click">
+                                        <Image Source="/Icons/search.png" Width="25"/>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Product Id" Binding="{Binding ShortName}" Width="2*">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="Height"  Value="40"/>
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Header="Title"  Binding="{Binding Title}" Width="6*">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="Height"  Value="40"/>
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Header="Band" Visibility="Hidden" Binding="{Binding Usage}">
+                            <DataGridColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#263238"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontFamily" Value="Calibri"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="Height"  Value="40"/>
+                                    <Setter Property="BorderThickness"  Value="0.5"/>
+                                    <Setter Property="Padding"  Value="10,0,0,0"/>
+                                </Style>
+                            </DataGridColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+            <Grid>
+                <Label x:Name="mylblClickCount"  Grid.Column="1" Margin="0,0,0,0" Background="Gray" Opacity="0.7" VerticalAlignment="Top" HorizontalAlignment="Right" Height="27" Panel.ZIndex="28" Foreground="Black"/>
+                <ac:AdornedControl Name="LoadingAdorner">
+                    <ac:AdornedControl.AdornerContent>
+                        <local1:LoadingWait></local1:LoadingWait>
+                    </ac:AdornedControl.AdornerContent>
+                    <esri:MapView x:Name="MyMapView" Map="{Binding Map, Source={StaticResource MapViewModel}}" Grid.Column="1" >
+                    </esri:MapView>
+                </ac:AdornedControl>
+            </Grid>
+
+        </Grid>
+
+    </DockPanel>
+</UserControl>

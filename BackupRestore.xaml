@@ -1,0 +1,219 @@
+﻿<UserControl x:Class="EWLDitital.PresentationLayer.Views.BackupRestore"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EWLDitital.PresentationLayer.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="#263238" >
+        <TabControl Name="tabcontroler"   Background="Transparent"  Margin="0,0,0,0" >
+            <TabItem Name="backup_tab" Width="150"  HorizontalContentAlignment="Center" VerticalContentAlignment="Top"  Header="Backup" FontSize="16"  Foreground="White" Background="#263238" Height="30" BorderBrush="Transparent" >
+                <Grid Background="#263238">
+                    <StackPanel Panel.ZIndex="2" Background="#263238">
+
+                        <Grid>
+                            <Grid Grid.Column="0">
+                                <TextBlock Foreground="White" HorizontalAlignment="Center" FontSize="16" Margin="10,10,0,0" FontWeight="Bold" TextWrapping="Wrap" Text="Backup ChartWatch Data "/>
+                            </Grid>
+                        </Grid>
+                        <Grid>
+                            <Grid Grid.Column="0">
+                                <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" FontWeight="Bold" TextWrapping="Wrap" Text="Instructions: "/>
+                            </Grid>
+                        </Grid>
+
+                        <Grid>
+                            <TextBlock>
+                            <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="1)	Click Select Path to select the path (Removable drive / CD) to store Backup ChartWatch data  "/>
+                                
+                                 <Button Panel.ZIndex="2" Name="btnSelectPath" ToolTip="Select Path"   Margin="0,0,0,-18"  Width="120" Height="30" BorderBrush="#FFF9F2F2" Style="{StaticResource MyButton1}" Click="btnSelectPath_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="#FF309C33" Opacity="1"/>
+                                    </Button.Background>
+                                    <Grid>
+                                        <TextBlock Text="Select Path"  FontSize="13" FontWeight="Bold" FontFamily="Calibri" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center">
+                                        </TextBlock>
+                                    </Grid> 
+                                </Button>
+                                
+                           </TextBlock>
+                        </Grid>
+                        <Grid>
+                            <TextBlock>
+                    <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="2)	Create folder and select to confirm Backup location."/>
+                
+                    
+                  </TextBlock>
+                        </Grid>
+
+                        <Grid>
+                            <TextBlock>
+                    <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="3)	Please close all ChartWatch folders like Inbox and Outbox before proceeding."/>
+                
+                  
+                </TextBlock>
+                        </Grid>
+
+                        <Grid>
+
+                            <Grid Grid.Row="0">
+                                <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="4)	Click Cancel to abort the Backup process."/>
+                            </Grid>
+                        </Grid>
+                        <Grid>
+
+                            <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="5)	Click Backup to store the Backup data at selected folder."/>
+
+                        </Grid>
+                        <Grid>
+
+                            <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="6)	Please wait as system may take some time to generate the Backup."/>
+
+                        </Grid>
+                        <Grid>
+                            <TextBlock>
+                            <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="Currently selected path is ."/>
+                                <TextBlock x:Name="lblBackupPath" Foreground="Orange" FontSize="16" Margin="2,10,0,0" TextWrapping="Wrap" Text=""/>
+                                <TextBlock Foreground="White" FontSize="16" Margin="2,10,0,0" TextWrapping="Wrap" Text=" You can change it using Select Path."/>
+                            </TextBlock>
+                        </Grid>
+                        <Grid Margin="0,40,0,0">
+
+                            <Grid Grid.Column="0">
+                                <Button Panel.ZIndex="2" Name="btnBackup" ToolTip="Backup"  HorizontalAlignment="Left"   Margin="150,0,10,1" HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="120" Height="30" BorderBrush="#FFF9F2F2" Grid.Column="1" Style="{StaticResource MyButton1}" Click="btnBackup_Click">
+
+                                    <Button.Background>
+                                        <SolidColorBrush Color="#FF309C33" Opacity="1"/>
+                                    </Button.Background>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="0*"/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="Backup"  FontSize="17" FontWeight="Bold" FontFamily="Calibri" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center" Margin="0,0,-1,0" Grid.RowSpan="2">
+                                        </TextBlock>
+                                    </Grid>
+                                </Button>
+                                <Button Panel.ZIndex="2" Name="btnCancel" ToolTip="Cancel"  HorizontalAlignment="Left"   Margin="10,0,10,1" HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="120" Height="30" BorderBrush="#FFF9F2F2" Grid.Column="1" Style="{StaticResource MyButton1}">
+
+                                    <Button.Background>
+                                        <SolidColorBrush Color="#FF309C33" Opacity="1"/>
+                                    </Button.Background>
+                                    <Grid>
+                                        <TextBlock Text="Cancel"  FontSize="17" FontWeight="Bold" FontFamily="Calibri" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center">
+                                        </TextBlock>
+                                    </Grid>
+                                </Button>
+                            </Grid>
+
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Name="restore_tab" Width="150" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"  Header="Restore" FontSize="16" Foreground="White" Background="#263238" Height="30" BorderBrush="Transparent" >
+                <Grid Background="#263238">
+                    <StackPanel Panel.ZIndex="2" Background="#263238">
+
+                        <Grid>
+                            <Grid Grid.Column="0">
+                                <TextBlock Foreground="White" HorizontalAlignment="Center" FontSize="16" Margin="10,10,0,0" FontWeight="Bold" TextWrapping="Wrap" Text="Restore ChartWatch Data"/>
+                            </Grid>
+                        </Grid>
+                        <Grid>
+                            <Grid Grid.Column="0">
+                                <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" FontWeight="Bold" TextWrapping="Wrap" Text="Instructions: "/>
+                            </Grid>
+                        </Grid>
+
+                        <Grid>
+                            <TextBlock>
+                            <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="1)	Please open ChartWatch application in administrator mode. "/>
+                                
+                                
+                                
+                           </TextBlock>
+                        </Grid>
+                        <Grid>
+                            <TextBlock>
+                    <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="NoWrap" Text="2)	If you are reinstalling the application because your computer crashed or any other reason."/>
+                                  
+                 <Button Panel.ZIndex="2" Name="btnSelectPath1" ToolTip="Select Path"   Margin="20,0,0,-30"  Width="120" Height="30" BorderBrush="#FFF9F2F2" Style="{StaticResource MyButton1}" Click="btnSelectPath1_Click">
+
+                    <Button.Background>
+                        <SolidColorBrush Color="#FF309C33" Opacity="1"/>
+                    </Button.Background>
+                    <Grid>
+                        <TextBlock Text="Select Path"  FontSize="13" FontWeight="Bold" FontFamily="Calibri" Margin="0,0,0,0" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center">
+                        </TextBlock>
+                    </Grid>
+                </Button>
+                    
+                  </TextBlock>
+                            <TextBlock Foreground="White" FontSize="16" Margin="10,30,0,0" TextWrapping="NoWrap" Text="Click Select Path to select the path (Removable drive / CD) to stored Backup ChartWatch data  "/>
+                        </Grid>
+
+                        <Grid>
+                            <TextBlock>
+                    <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="3)	Please close all ChartWatch folders like Inbox and Outbox before proceeding"/>
+                
+                  
+                </TextBlock>
+                        </Grid>
+
+                        <Grid>
+
+                            <Grid Grid.Row="0">
+                                <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="4)	Click Cancel to abort the Backup process."/>
+                            </Grid>
+                        </Grid>
+                        <Grid>
+
+                            <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="5)	Click Restore to restore ChartWatch data from selected folder."/>
+
+                        </Grid>
+                        <Grid>
+
+                            <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="6)	Please wait as system may take some time to restore the Backup."/>
+
+                        </Grid>
+                        <Grid>
+                            <TextBlock>
+                            <TextBlock Foreground="White" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="Currently selected path is ."/>
+                                <TextBlock x:Name="lblRestorPath" Foreground="Orange" FontSize="16" Margin="2,10,0,0" TextWrapping="Wrap" Text=""/>
+                                <TextBlock Foreground="White" FontSize="16" Margin="2,10,0,0" TextWrapping="Wrap" Text=" You can change it using Select Path."/>
+                            </TextBlock>
+                        </Grid>
+                        <Grid Margin="0,40,0,0">
+
+                            <Grid Grid.Column="0">
+                                <Button Panel.ZIndex="2" Name="btnRestore" ToolTip="Backup"  HorizontalAlignment="Left"   Margin="150,0,10,1" HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="120" Height="30" BorderBrush="#FFF9F2F2" Grid.Column="1" Style="{StaticResource MyButton1}" Click="btnRestore_Click">
+
+                                    <Button.Background>
+                                        <SolidColorBrush Color="#FF309C33" Opacity="1"/>
+                                    </Button.Background>
+                                    <Grid>
+                                        <TextBlock Text="Restore"  FontSize="17" FontWeight="Bold" FontFamily="Calibri" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center">
+                                        </TextBlock>
+                                    </Grid>
+                                </Button>
+                                <Button Panel.ZIndex="2" Name="btnCancel1" ToolTip="Cancel"  HorizontalAlignment="Left"   Margin="10,0,10,1" HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="120" Height="30" BorderBrush="#FFF9F2F2" Grid.Column="1" Style="{StaticResource MyButton1}">
+
+                                    <Button.Background>
+                                        <SolidColorBrush Color="#FF309C33" Opacity="1"/>
+                                    </Button.Background>
+                                    <Grid>
+                                        <TextBlock Text="Cancel"  FontSize="17" FontWeight="Bold" FontFamily="Calibri" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center">
+                                        </TextBlock>
+                                    </Grid>
+                                </Button>
+                            </Grid>
+
+                        </Grid>
+
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>
